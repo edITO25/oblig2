@@ -1,4 +1,4 @@
-variable "kortnavn" {
+/*variable "kortnavn" {
   description = "Kortnavnet ditt. Settes i config/felles.tfvars."
   type        = string
 
@@ -36,3 +36,4 @@ variable "allow_http_from" {
   type        = string
   default     = "Internet"
 }
+*/
