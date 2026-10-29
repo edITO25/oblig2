@@ -26,6 +26,7 @@ variable "miljo" {
 variable "tjeneste" {
   description = "Tjenesten denne state-instansen eier."
   type        = string
+
 }
 
 variable "prefix" {
