@@ -22,18 +22,6 @@ locals {
   }
 }
 
-module "vm" {
-  source   = "../../modules/vm"
-  for_each = { for navn, runtime in var.tjenester : navn => runtime if runtime == "vm" }
-
-  service             = each.key
-  resource_group_name = local.network.resource_group_name
-  location            = var.location
-  subnet_id           = local.network.subnet_ids[each.key]
-  size                = var.vm_size
-  ssh_public_key      = var.ssh_public_key
-  tags                = local.tags
-}
 
 module "webapp" {
   source   = "../../modules/webapp"
@@ -47,4 +35,13 @@ module "webapp" {
   subnet_id           = local.network.subnet_ids[each.key]
   sku                 = var.webapp_sku
   tags                = local.tags
+}
+
+
+removed {
+  from = module.vm
+
+  lifecycle {
+    destroy = false
+  }
 }

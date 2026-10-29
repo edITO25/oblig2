@@ -48,16 +48,6 @@ variable "tjenester" {
   }
 }
 
-variable "vm_size" {
-  description = "VM-størrelsen for tjenester med runtime vm."
-  type        = string
-  default     = "Standard_B2als_v2"
-}
-
-variable "ssh_public_key" {
-  description = "Offentlig SSH-nøkkel til VM-ene. Ikke hemmelig."
-  type        = string
-}
 
 variable "webapp_sku" {
   description = "SKU for App Service-planene til tjenester med runtime webapp."
