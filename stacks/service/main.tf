@@ -29,6 +29,10 @@ locals {
   nic_id        = format("%s/providers/Microsoft.Network/networkInterfaces/%s", local.resource_group_id, local.nic_name)
   pip_name      = "pip-${var.tjeneste}"
   pip_id        = format("%s/providers/Microsoft.Network/publicIPAddresses/%s", local.resource_group_id, local.pip_name)
+  asp_name      = "asp-${var.tjeneste}"
+  asp_id        = format("%s/providers/Microsoft.Web/serverFarms/%s", local.resource_group_id, local.asp_name)
+  app_name      = "app-${var.kortnavn}-${var.tjeneste}-${var.miljo}"
+  app_id        = format("%s/providers/Microsoft.Web/sites/%s", local.resource_group_id, local.app_name)
 }
 
 module "subnet" {
@@ -93,6 +97,21 @@ module "vm" {
   tags                = local.tags
 }
 
+module "webapp" {
+  source   = "../../modules/webapp"
+  for_each = var.runtime == "webapp" ? { (var.tjeneste) = var.runtime } : {}
+
+  service             = each.key
+  kortnavn            = var.kortnavn
+  miljo               = var.miljo
+  resource_group_name = local.resource_group_name
+  location            = var.location
+  subnet_id           = local.subnet_id
+  sku                 = var.webapp_sku
+  tags                = local.tags
+}
+
+
 import {
   for_each = toset([var.tjeneste])
   to       = module.subnet[each.key].azurerm_subnet.this
@@ -146,4 +165,16 @@ import {
   for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
   to       = module.vm[each.key].azurerm_public_ip.this
   id       = local.pip_id
+}
+
+import {
+  for_each = var.runtime == "webapp" ? toset([var.tjeneste]) : toset([])
+  to       = module.webapp[each.key].azurerm_linux_web_app.this
+  id       = local.app_id
+}
+
+import {
+  for_each = var.runtime == "webapp" ? toset([var.tjeneste]) : toset([])
+  to       = module.webapp[each.key].azurerm_service_plan.this
+  id       = local.asp_id
 }
