@@ -7,7 +7,7 @@ locals {
     kurs  = "dcst3005-oblig2"
   }
 
-#Azure ID-er
+  #Azure ID-er
   subscription_scope  = join("/", ["", "subscriptions", data.azurerm_client_config.current.subscription_id])
   resource_group_name = "rg-${var.kortnavn}-oblig2-${var.miljo}"
   vnet_name           = "vnet-${var.kortnavn}-${var.miljo}"
