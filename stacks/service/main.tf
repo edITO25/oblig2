@@ -14,25 +14,7 @@ locals {
   vnet_id             = format("%s/providers/Microsoft.Network/virtualNetworks/%s", local.resource_group_id, local.vnet_name)
 
   subnet_name = "snet-${var.tjeneste}"
-  nsg_name    = "nsg-${var.tjeneste}"
   subnet_id   = format("%s/subnets/%s", local.vnet_id, local.subnet_name)
-  nsg_id      = format("%s/providers/Microsoft.Network/networkSecurityGroups/%s", local.resource_group_id, local.nsg_name)
-  rule_id     = format("%s/securityRules/allow-http", local.nsg_id)
-
-  storage_name  = "st${var.kortnavn}${var.tjeneste}${var.miljo}"
-  storage_id    = format("%s/providers/Microsoft.Storage/storageAccounts/%s", local.resource_group_id, local.storage_name)
-  keyvault_name = "kv-${var.kortnavn}-${var.tjeneste}-${var.miljo}"
-  keyvault_id   = format("%s/providers/Microsoft.KeyVault/vaults/%s", local.resource_group_id, local.keyvault_name)
-  vm_name       = "vm-${var.tjeneste}"
-  vm_id         = format("%s/providers/Microsoft.Compute/virtualMachines/%s", local.resource_group_id, local.vm_name)
-  nic_name      = "nic-${var.tjeneste}"
-  nic_id        = format("%s/providers/Microsoft.Network/networkInterfaces/%s", local.resource_group_id, local.nic_name)
-  pip_name      = "pip-${var.tjeneste}"
-  pip_id        = format("%s/providers/Microsoft.Network/publicIPAddresses/%s", local.resource_group_id, local.pip_name)
-  asp_name      = "asp-${var.tjeneste}"
-  asp_id        = format("%s/providers/Microsoft.Web/serverFarms/%s", local.resource_group_id, local.asp_name)
-  app_name      = "app-${var.kortnavn}-${var.tjeneste}-${var.miljo}"
-  app_id        = format("%s/providers/Microsoft.Web/sites/%s", local.resource_group_id, local.app_name)
 }
 
 module "subnet" {
@@ -109,72 +91,4 @@ module "webapp" {
   subnet_id           = local.subnet_id
   sku                 = var.webapp_sku
   tags                = local.tags
-}
-
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.subnet[each.key].azurerm_subnet.this
-  id       = local.subnet_id
-}
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.subnet[each.key].azurerm_network_security_group.this
-  id       = local.nsg_id
-}
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.subnet[each.key].azurerm_network_security_rule.http
-  id       = local.rule_id
-}
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.subnet[each.key].azurerm_subnet_network_security_group_association.this
-  id       = local.subnet_id
-}
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.storage[each.key].azurerm_storage_account.this
-  id       = local.storage_id
-}
-
-import {
-  for_each = toset([var.tjeneste])
-  to       = module.keyvault[each.key].azurerm_key_vault.this
-  id       = local.keyvault_id
-}
-
-
-import {
-  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
-  to       = module.vm[each.key].azurerm_linux_virtual_machine.this
-  id       = local.vm_id
-}
-
-import {
-  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
-  to       = module.vm[each.key].azurerm_network_interface.this
-  id       = local.nic_id
-}
-
-import {
-  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
-  to       = module.vm[each.key].azurerm_public_ip.this
-  id       = local.pip_id
-}
-
-import {
-  for_each = var.runtime == "webapp" ? toset([var.tjeneste]) : toset([])
-  to       = module.webapp[each.key].azurerm_linux_web_app.this
-  id       = local.app_id
-}
-
-import {
-  for_each = var.runtime == "webapp" ? toset([var.tjeneste]) : toset([])
-  to       = module.webapp[each.key].azurerm_service_plan.this
-  id       = local.asp_id
 }
