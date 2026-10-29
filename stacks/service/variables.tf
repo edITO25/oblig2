@@ -14,7 +14,7 @@ variable "location" {
 }
 
 variable "miljo" {
-  description = "Miljøet. Settes av scripts/kjor.sh (TF_VAR_miljo), ikke i en .tfvars-fil."
+  description = "Miljøet. Settes av scripts/kjor.sh."
   type        = string
 
   validation {
@@ -26,7 +26,6 @@ variable "miljo" {
 variable "tjeneste" {
   description = "Tjenesten denne state-instansen eier."
   type        = string
-
 }
 
 variable "prefix" {
