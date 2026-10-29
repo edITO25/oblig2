@@ -1,4 +1,4 @@
-output "resource_group_name" {
+/*output "resource_group_name" {
   description = "Ressursgruppa alle stackene bruker."
   value       = local.resource_group_name
 }
@@ -17,3 +17,4 @@ output "subnet_ids" {
   description = "Subnett-ID per tjeneste."
   value       = { for navn, s in module.subnet : navn => s.subnet_id }
 }
+*/
