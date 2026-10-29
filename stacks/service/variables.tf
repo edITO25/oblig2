@@ -57,4 +57,5 @@ variable "vm_size" {
 variable "ssh_public_key" {
   description = "Offentlig SSH-nøkkel til VM-ene. Ikke hemmelig."
   type        = string
+  default     = null
 }
