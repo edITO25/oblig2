@@ -59,3 +59,9 @@ variable "ssh_public_key" {
   type        = string
   default     = null
 }
+
+variable "webapp_sku" {
+  description = "SKU for App Service-planene til tjenester med runtime webapp."
+  type        = string
+  default     = "B1"
+}
