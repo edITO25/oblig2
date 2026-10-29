@@ -28,3 +28,9 @@ output "key_vault_names" {
   description = "Key Vault per tjeneste."
   value       = { for navn, k in module.keyvault : navn => k.name }
 }
+
+#fra app
+output "vm_public_ips" {
+  description = "Offentlig IP per VM-tjeneste. Åpne http://<ip> for å se boot-id-en."
+  value       = { for navn, v in module.vm : navn => v.public_ip }
+}

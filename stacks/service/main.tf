@@ -23,6 +23,12 @@ locals {
   storage_id    = format("%s/providers/Microsoft.Storage/storageAccounts/%s", local.resource_group_id, local.storage_name)
   keyvault_name = "kv-${var.kortnavn}-${var.tjeneste}-${var.miljo}"
   keyvault_id   = format("%s/providers/Microsoft.KeyVault/vaults/%s", local.resource_group_id, local.keyvault_name)
+  vm_name       = "vm-${var.tjeneste}"
+  vm_id         = format("%s/providers/Microsoft.Compute/virtualMachines/%s", local.resource_group_id, local.vm_name)
+  nic_name      = "nic-${var.tjeneste}"
+  nic_id        = format("%s/providers/Microsoft.Network/networkInterfaces/%s", local.resource_group_id, local.nic_name)
+  pip_name      = "pip-${var.tjeneste}"
+  pip_id        = format("%s/providers/Microsoft.Network/publicIPAddresses/%s", local.resource_group_id, local.pip_name)
 }
 
 module "subnet" {
@@ -73,6 +79,20 @@ module "keyvault" {
   tags                = local.tags
 }
 
+#fra app
+module "vm" {
+  source   = "../../modules/vm"
+  for_each = var.runtime == "vm" ? { (var.tjeneste) = var.runtime } : {}
+
+  service             = each.key
+  resource_group_name = local.resource_group_name
+  location            = var.location
+  subnet_id           = local.subnet_id
+  size                = var.vm_size
+  ssh_public_key      = var.ssh_public_key
+  tags                = local.tags
+}
+
 import {
   for_each = toset([var.tjeneste])
   to       = module.subnet[each.key].azurerm_subnet.this
@@ -107,4 +127,23 @@ import {
   for_each = toset([var.tjeneste])
   to       = module.keyvault[each.key].azurerm_key_vault.this
   id       = local.keyvault_id
+}
+
+
+import {
+  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
+  to       = module.vm[each.key].azurerm_linux_virtual_machine.this
+  id       = local.vm_id
+}
+
+import {
+  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
+  to       = module.vm[each.key].azurerm_network_interface.this
+  id       = local.nic_id
+}
+
+import {
+  for_each = var.runtime == "vm" ? toset([var.tjeneste]) : toset([])
+  to       = module.vm[each.key].azurerm_public_ip.this
+  id       = local.pip_id
 }
