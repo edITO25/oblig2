@@ -41,6 +41,23 @@ resource "azurerm_network_security_rule" "http" {
   destination_address_prefix  = "*"
 }
 
+#EO1
+resource "azurerm_network_security_rule" "ordre_tcp" {
+  # Ressursen opprettes bare for tjenesten ordre.
+  for_each                    = var.service == "ordre" ? { ordre = true } : {}
+  name                        = "allow-tcp"
+  resource_group_name         = var.resource_group_name
+  network_security_group_name = azurerm_network_security_group.this.name
+  priority                    = 110
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8763"
+  source_address_prefix       = "172.16.244.0/24"
+  destination_address_prefix  = "*"
+}
+
 # Koblingen mellom subnettet og NSG-en er en egen ressurs, ikke et felt på
 # subnettet. Den er lett å overse når du lister hva en stack eier.
 resource "azurerm_subnet_network_security_group_association" "this" {
