@@ -5,7 +5,6 @@ locals {
     eier  = var.kortnavn
     miljo = var.miljo
     kurs  = "dcst3005-oblig2"
-    keep  = "true"
   }
 
   subscription_scope  = join("/", ["", "subscriptions", data.azurerm_client_config.current.subscription_id])
