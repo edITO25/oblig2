@@ -3,7 +3,6 @@ locals {
     eier  = var.kortnavn
     miljo = var.miljo
     kurs  = "dcst3005-oblig2"
-    keep  = "true"
   }
 
   resource_group_name = "rg-${var.kortnavn}-oblig2-${var.miljo}"
