@@ -92,3 +92,6 @@ module "webapp" {
   sku                 = var.webapp_sku
   tags                = local.tags
 }
+
+
+#siste utrulling -> skal vise No changes for alle stackene 
